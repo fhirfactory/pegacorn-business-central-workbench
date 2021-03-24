@@ -39,7 +39,7 @@ end-if
 #     /system-property=org.uberfire.nio.git.dir:write-attribute(name=value,value="/opt/jboss/wildfly/mygit")
 # end-if
 
-/system-property=kie.maven.settings.custom:add(value="/opt/jboss/.m2/settings.xml")
+/system-property=kie.maven.settings.custom:add(value="/var/lib/maven-settings/settings.xml")
 
 
 stop-embedded-server

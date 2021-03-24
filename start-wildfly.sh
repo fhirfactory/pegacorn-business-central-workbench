@@ -51,12 +51,23 @@ sed -i "s+<logger category=\"sun.rmi\"+<logger category=\"$PEGACORN_LOG_CATEGORY
 sed -i "s+<logger category=\"sun.rmi\"+<logger category=\"$AETHER_LOG_CATEGORY\"><level name=\"$AETHER_LOG_LEVEL\"/></logger><logger category=\"sun.rmi\"+" "$JBOSS_HOME/standalone/configuration/standalone.xml"
 
 #From https://stackoverflow.com/questions/55112904/mutual-tls-on-apache-camel
-#wildfly_runner+=( -Djavax.net.ssl.keyStore="/var/lib/pegacorn-keystores/keystore.jks" )
-#wildfly_runner+=( -Djavax.net.ssl.keyStorePassword="${KEY_PASSWORD}" )
+wildfly_runner+=( -Djavax.net.ssl.keyStore="/var/lib/pegacorn-keystores/keystore.jks" )
+wildfly_runner+=( -Djavax.net.ssl.keyStorePassword="${KEY_PASSWORD}" )
 
 #From https://stackoverflow.com/questions/48521776/wildfly-11-use-certificate-to-make-https-requests
-#wildfly_runner+=( -Djavax.net.ssl.trustStore="/var/lib/pegacorn-keystores/truststore.jks" )
-#wildfly_runner+=( -Djavax.net.ssl.trustStorePassword="${TRUSTSTORE_PASSWORD}" )
+wildfly_runner+=( -Djavax.net.ssl.trustStore="/var/lib/pegacorn-keystores/truststore.jks" )
+wildfly_runner+=( -Djavax.net.ssl.trustStorePassword="${TRUSTSTORE_PASSWORD}" )
+
+
+# Force download of dependencies while the server is starting.  Without this maven fails to download the dependencies at runtime after ssl enabled.
+wildfly_runner+=( -Dkie.maven.offline.force=true )
+
+# Required due to ssl being enabled.  Need to use https-remoting instead of the default http-remoting
+wildfly_runner+=( -Ddatasource.management.wildfly.protocol=https-remoting -Ddatasource.management.wildfly.port=9993 )
+
+# Use WildflyUserManagementService implementation instead of the cli implementation.  The cli implementation does not seem to support https-remoting so fails.
+wildfly_runner+=( -Dorg.uberfire.ext.security.management.api.userManagementServices=WildflyUserManagementService -Dorg.uberfire.ext.security.management.wildfly.properties.groups-file-path=$JBOSS_HOME/standalone/configuration/application-roles.properties -Dorg.uberfire.ext.security.management.wildfly.properties.users-file-path=$JBOSS_HOME/standalone/configuration/application-users.properties )
+
 
 
 
