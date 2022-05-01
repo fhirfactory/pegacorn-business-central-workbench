@@ -1,0 +1,7 @@
+---
+name: pegacorn-business-central-workbench
+sources:
+- https://github.com/fhirfactory/pegacorn-business-central-workbench.git
+version: 1.0.0-SNAPSHOT
+description: Business central workbench
+icon: img/icons/camel.svg
